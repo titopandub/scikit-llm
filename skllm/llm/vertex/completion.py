@@ -79,19 +79,3 @@ def get_completion_chat_gemini_enhanced(model: str, context: str, text: str, thi
         )
     )
     return response.text
-
-
-@retry(max_retries=3)
-def get_completion_chat_gemini_no_thinking(model: str, context: str, text: str):
-    """
-    Gemini completion with thinking disabled (thinking_budget=0).
-    
-    Args:
-        model: The Gemini model name
-        context: System instruction/context
-        text: The input text to process
-        
-    Returns:
-        str: The model's response text
-    """
-    return get_completion_chat_gemini_enhanced(model, context, text, thinking_budget=0)

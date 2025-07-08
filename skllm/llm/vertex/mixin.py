@@ -10,8 +10,7 @@ from skllm.llm.vertex.completion import (
     get_completion_chat_mode, 
     get_completion, 
     get_completion_chat_gemini,
-    get_completion_chat_gemini_enhanced,
-    get_completion_chat_gemini_no_thinking
+    get_completion_chat_gemini_enhanced
 )
 from skllm.utils import extract_json_key
 import numpy as np
