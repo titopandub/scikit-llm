@@ -6,7 +6,13 @@ from skllm.llm.base import (
     BaseTunableMixin,
 )
 from skllm.llm.vertex.tuning import tune
-from skllm.llm.vertex.completion import get_completion_chat_mode, get_completion, get_completion_chat_gemini
+from skllm.llm.vertex.completion import (
+    get_completion_chat_mode, 
+    get_completion, 
+    get_completion_chat_gemini,
+    get_completion_chat_gemini_enhanced,
+    get_completion_chat_gemini_no_thinking
+)
 from skllm.utils import extract_json_key
 import numpy as np
 import pandas as pd
@@ -17,6 +23,18 @@ class VertexMixin:
 
 
 class VertexTextCompletionMixin(BaseTextCompletionMixin):
+    def __init__(self, *args, thinking_budget: int = 0, **kwargs):
+        """
+        Initialize with thinking control.
+        
+        Parameters
+        ----------
+        thinking_budget : int, default=0
+            Budget for thinking tokens. 0 disables thinking for Gemini models.
+        """
+        super().__init__(*args, **kwargs)
+        self.thinking_budget = thinking_budget
+    
     def _get_chat_completion(
         self,
         model: str,
@@ -33,13 +51,18 @@ class VertexTextCompletionMixin(BaseTextCompletionMixin):
         if model.startswith("chat-"):
             completion = get_completion_chat_mode(model, system_message, messages)
         elif model.startswith("gemini-"):
-            completion = get_completion_chat_gemini(model, system_message, messages)
+            # Use enhanced completion with thinking control for Gemini models
+            completion = get_completion_chat_gemini_enhanced(
+                model, system_message, messages, thinking_budget=self.thinking_budget
+            )
         else:
             completion = get_completion(model, messages)
         return str(completion)
 
     def _convert_completion_to_str(self, completion: str) -> str:
         return completion
+
+
 
 
 class VertexClassifierMixin(BaseClassifierMixin, VertexTextCompletionMixin):
@@ -62,6 +85,8 @@ class VertexClassifierMixin(BaseClassifierMixin, VertexTextCompletionMixin):
             print(f"Could not extract the label from the completion: {str(e)}")
             label = ""
         return label
+
+
 
 
 class VertexEmbeddingMixin(BaseEmbeddingMixin):

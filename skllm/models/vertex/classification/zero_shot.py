@@ -15,6 +15,7 @@ class ZeroShotVertexClassifier(
         model: str = "text-bison@002",
         default_label: str = "Random",
         prompt_template: Optional[str] = None,
+        thinking_budget: int = 0,
         **kwargs,
     ):
         """
@@ -28,11 +29,14 @@ class ZeroShotVertexClassifier(
             default label for failed prediction; if "Random" -> selects randomly based on class frequencies, by default "Random"
         prompt_template : Optional[str], optional
             custom prompt template to use, by default None
+        thinking_budget : int, optional
+            budget for thinking tokens (Gemini models only), 0 disables thinking, by default 0
         """
         super().__init__(
             model=model,
             default_label=default_label,
             prompt_template=prompt_template,
+            thinking_budget=thinking_budget,
             **kwargs,
         )
 
@@ -46,6 +50,7 @@ class MultiLabelZeroShotVertexClassifier(
         default_label: str = "Random",
         prompt_template: Optional[str] = None,
         max_labels: Optional[int] = 5,
+        thinking_budget: int = 0,
         **kwargs,
     ):
         """
@@ -61,11 +66,14 @@ class MultiLabelZeroShotVertexClassifier(
             custom prompt template to use, by default None
         max_labels : Optional[int], optional
             maximum labels per sample, by default 5
+        thinking_budget : int, optional
+            budget for thinking tokens (Gemini models only), 0 disables thinking, by default 0
         """
         super().__init__(
             model=model,
             default_label=default_label,
             prompt_template=prompt_template,
             max_labels=max_labels,
+            thinking_budget=thinking_budget,
             **kwargs,
         )
