@@ -9,7 +9,6 @@ from skllm.llm.vertex.tuning import tune
 from skllm.llm.vertex.completion import (
     get_completion_chat_mode, 
     get_completion, 
-    get_completion_chat_gemini,
     get_completion_chat_gemini_enhanced
 )
 from skllm.utils import extract_json_key
@@ -62,8 +61,6 @@ class VertexTextCompletionMixin(BaseTextCompletionMixin):
         return completion
 
 
-
-
 class VertexClassifierMixin(BaseClassifierMixin, VertexTextCompletionMixin):
     def _extract_out_label(self, completion: str, **kwargs) -> Any:
         """Extracts the label from a completion.
@@ -84,8 +81,6 @@ class VertexClassifierMixin(BaseClassifierMixin, VertexTextCompletionMixin):
             print(f"Could not extract the label from the completion: {str(e)}")
             label = ""
         return label
-
-
 
 
 class VertexEmbeddingMixin(BaseEmbeddingMixin):
