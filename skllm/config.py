@@ -6,6 +6,7 @@ _OPENAI_ORG_VAR = "SKLLM_CONFIG_OPENAI_ORG"
 _AZURE_API_BASE_VAR = "SKLLM_CONFIG_AZURE_API_BASE"
 _AZURE_API_VERSION_VAR = "SKLLM_CONFIG_AZURE_API_VERSION"
 _GOOGLE_PROJECT = "GOOGLE_CLOUD_PROJECT"
+_GOOGLE_GENAI_USE_VERTEXAI = "GOOGLE_GENAI_USE_VERTEXAI"
 _GPT_URL_VAR = "SKLLM_CONFIG_GPT_URL"
 _ANTHROPIC_KEY_VAR = "SKLLM_CONFIG_ANTHROPIC_KEY"
 _GGUF_DOWNLOAD_PATH = "SKLLM_CONFIG_GGUF_DOWNLOAD_PATH"
@@ -228,3 +229,27 @@ class SKLLMConfig:
     def get_gguf_verbose() -> bool:
         """Gets the verbosity of the GGUF model."""
         return os.environ.get(_GGUF_VERBOSE, "False").lower() == "true"
+
+    @staticmethod
+    def set_google_genai_use_vertexai(use_vertexai: bool) -> None:
+        """Sets whether Google GenAI should use Vertex AI.
+
+        Parameters
+        ----------
+        use_vertexai : bool
+            Whether to use Vertex AI for Google GenAI.
+        """
+        if not isinstance(use_vertexai, bool):
+            raise ValueError("use_vertexai must be a boolean")
+        os.environ[_GOOGLE_GENAI_USE_VERTEXAI] = str(use_vertexai)
+
+    @staticmethod
+    def get_google_genai_use_vertexai() -> bool:
+        """Gets whether Google GenAI should use Vertex AI.
+
+        Returns
+        -------
+        bool
+            Whether to use Vertex AI for Google GenAI.
+        """
+        return os.environ.get(_GOOGLE_GENAI_USE_VERTEXAI, "False").lower() == "true"

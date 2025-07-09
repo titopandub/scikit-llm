@@ -16,29 +16,41 @@ except ImportError:
 
 def _get_genai_client():
     """Get or create the GenAI client with proper Vertex AI configuration."""
-    global _genai_client
+    global _genai_client, _GENAI_AVAILABLE
     if _genai_client is None and _GENAI_AVAILABLE:
         try:
-            # Try to initialize with Vertex AI configuration
-            import vertexai
-            from google.auth import default
+            # Check if user wants to use Vertex AI
+            from skllm.config import SKLLMConfig
+            use_vertexai = SKLLMConfig.get_google_genai_use_vertexai()
             
-            # Get default credentials and project
-            credentials, project = default()
-            
-            # Initialize with Vertex AI
-            _genai_client = genai.Client(
-                vertexai=True,
-                project=project,
-                location="us-central1"  # Default location
-            )
+            if use_vertexai:
+                # Try to initialize with Vertex AI configuration
+                import vertexai
+                from google.auth import default
+                
+                # Get default credentials and project
+                credentials, project = default()
+                
+                # Use project from config if available, otherwise use default
+                config_project = SKLLMConfig.get_google_project()
+                if config_project:
+                    project = config_project
+                
+                # Initialize with Vertex AI
+                _genai_client = genai.Client(
+                    vertexai=True,
+                    project=project,
+                    location="us-central1"  # Default location
+                )
+            else:
+                # Initialize without Vertex AI
+                _genai_client = genai.Client()
         except Exception:
             # Fallback: try without explicit config (will use environment variables)
             try:
                 _genai_client = genai.Client()
             except Exception:
                 # If all fails, disable GenAI
-                global _GENAI_AVAILABLE
                 _GENAI_AVAILABLE = False
                 _genai_client = None
     return _genai_client
