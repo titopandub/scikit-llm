@@ -167,6 +167,9 @@ class BaseClassifier(ABC, _SklBaseEstimator, _SklClassifierMixin):
                 " class"
             )
 
+        # Call super().__init__ with all kwargs to ensure proper MRO handling
+        super().__init__(**kwargs)
+        
         self.model = model
         if not isinstance(default_label, str):
             raise TypeError("default_label must be a string")
