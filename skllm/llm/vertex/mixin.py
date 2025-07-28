@@ -9,7 +9,7 @@ from skllm.llm.vertex.tuning import tune
 from skllm.llm.vertex.completion import (
     get_completion_chat_mode, 
     get_completion, 
-    get_completion_chat_gemini_enhanced
+    get_completion_chat_gemini
 )
 from skllm.utils import extract_json_key
 import numpy as np
@@ -21,17 +21,11 @@ class VertexMixin:
 
 
 class VertexTextCompletionMixin(BaseTextCompletionMixin):
-    def __init__(self, *args, thinking_budget: int = 0, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
-        Initialize with thinking control.
-        
-        Parameters
-        ----------
-        thinking_budget : int, default=0
-            Budget for thinking tokens. 0 disables thinking for Gemini models.
+        Initialize Vertex text completion mixin.
         """
         super().__init__(*args, **kwargs)
-        self.thinking_budget = thinking_budget
     
     def _get_chat_completion(
         self,
@@ -49,9 +43,9 @@ class VertexTextCompletionMixin(BaseTextCompletionMixin):
         if model.startswith("chat-"):
             completion = get_completion_chat_mode(model, system_message, messages)
         elif model.startswith("gemini-"):
-            # Use enhanced completion with thinking control for Gemini models
-            completion = get_completion_chat_gemini_enhanced(
-                model, system_message, messages, thinking_budget=self.thinking_budget
+            # Use GenAI client for Gemini models
+            completion = get_completion_chat_gemini(
+                model, system_message, messages
             )
         else:
             completion = get_completion(model, messages)
